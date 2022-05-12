@@ -1,0 +1,2 @@
+E:\An3Sem2\PI\ProjectDummy\Identification-of-fractures-in-surfaces\Proiect\x64\Debug\OpenCVApplication.exe
+E:\An3Sem2\PI\Test\Proiect\x64\Debug\OpenCVApplication.exe

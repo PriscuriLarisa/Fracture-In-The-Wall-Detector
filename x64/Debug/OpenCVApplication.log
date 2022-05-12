@@ -1,0 +1,10 @@
+﻿  OpenCVApplication.cpp
+E:\An3Sem2\PI\Test\Proiect\OpenCVApplication.cpp(83,6): warning C4101: 'h': unreferenced local variable
+E:\An3Sem2\PI\Test\Proiect\OpenCVApplication.cpp(138,6): warning C4101: 'h': unreferenced local variable
+E:\An3Sem2\PI\Test\Proiect\OpenCVApplication.cpp(354,6): warning C4101: 'save': unreferenced local variable
+E:\An3Sem2\PI\Test\Proiect\OpenCVApplication.cpp(354,16): warning C4101: 'r': unreferenced local variable
+E:\An3Sem2\PI\Test\Proiect\OpenCVApplication.cpp(354,12): warning C4101: 'it': unreferenced local variable
+  OpenCVApplication.vcxproj -> E:\An3Sem2\PI\Test\Proiect\x64\Debug\OpenCVApplication.exe
+  OpenCV\dll\Debug\opencv_ffmpeg340_64.dll
+  OpenCV\dll\Debug\opencv_world340d.dll
+          2 file(s) copied.

@@ -49,15 +49,9 @@ void testOpenImage()
 	}
 }
 
-int morph_elem = 0;
-int morph_size = 30;
-int morph_operator = 0;
-int const max_operator = 4;
-int const max_elem = 2;
-int const max_kernel_size = 21;
-int trashold = 140;
 
-Mat_<uchar> bin(Mat_<uchar> src) {
+
+Mat_<uchar> bin(Mat_<uchar> src, int trashold) {
 	Mat_<uchar> dst = src.clone();
 	for (int i = 0; i < src.rows; i++) {
 		for (int j = 0; j < src.cols; j++) {
@@ -236,9 +230,8 @@ Mat applyDilate(Mat src, Mat dst, Mat element) {
 	return dst;
 }
 
-int iteration=1;
 
-std::tuple<Mat, float> applyOperations(Mat_<uchar> src, Mat_<uchar> binarized, float elongation) {
+std::tuple<Mat, float> applyOperations(Mat_<uchar> src, Mat_<uchar> binarized, float elongation, int iteration) {
 	Mat element, dstDilate, dstOpened2;
 	int step = 0;
 
@@ -281,61 +274,79 @@ std::tuple<Mat, float> applyOperations(Mat_<uchar> src, Mat_<uchar> binarized, f
 	return std::make_tuple(dstBinarized2, elongation);
 }
 
+Mat_<uchar> applyInitialOperations(Mat_<uchar> src, int morph_size, int trashold) {
+
+	Mat dstEqualize, dstBlackHat, dstTopHat, dstOpened, dstBinarizedAdaptive, dstDilate;
+	equalizeHist(src, dstEqualize);
+
+	imshow("0.1. Histograma egalizata", dstEqualize);
+	Mat element;
+
+	element = getStructuringElement(2, Size(2 * morph_size + 1, 2 * morph_size + 1), Point(morph_size, morph_size));
+	dstBlackHat = applyBlackHat(dstEqualize, dstBlackHat, element);
+
+	imshow("0.2. Aplicare BlackHat", dstBlackHat);
+
+	Mat_<uchar> dstBinarized = bin(dstBlackHat, trashold);
+	imshow("0.3. Binarizare hardcodata", dstBinarized);
+
+	return dstBinarized;
+}
+
 void crack()
 {
 	char fname[MAX_PATH];
 	while (openFileDlg(fname))
 	{
+
+		int morph_elem = 0;
+		int morph_size = 30;
+		int morph_operator = 0;
+		int const max_operator = 4;
+		int const max_elem = 2;
+		int const max_kernel_size = 21;
+		int trashold = 140;
+		int iteration = 1;
+
 		Mat_<uchar> src;
 		Mat dstEqualize, dstBlackHat, dstTopHat, dstOpened, dstBinarizedAdaptive, dstDilate;
 		Mat_<uchar> dstOpened2;
 		src = imread(fname, IMREAD_GRAYSCALE);
-		imshow("1.0. Source", src);
+		imshow("0.0. Source", src);
 
-		equalizeHist(src, dstEqualize);
-
-		imshow("1.1. Histograma egalizata", dstEqualize);
-		Mat element;
-
-		element = getStructuringElement(2, Size(2 * morph_size + 1, 2 * morph_size + 1), Point(morph_size, morph_size));
-		dstBlackHat = applyBlackHat(dstEqualize, dstBlackHat, element);
-
-		imshow("1.2. Aplicare BlackHat", dstBlackHat);
-
-		Mat_<uchar> dstBinarized = bin(dstBlackHat);
-		imshow("1.3. Binarizare hardcodata", dstBinarized);
+		Mat_<uchar> dstBinarized = applyInitialOperations(src, morph_size, trashold);
 
 		char windowName[100];
 		
-		auto complexObject = applyOperations(src, dstBinarized, 15.0f);
+		auto complexObject = applyOperations(src, dstBinarized, 15.0f, iteration);
 		Mat resultMat = std::get<0>(complexObject);
 		sprintf(windowName, "%d %s", iteration, "-> Rezultat Binar");
 		imshow(windowName, resultMat);
 		iteration++;
 		float elongation = std::get<1>(complexObject);
 
-		complexObject = applyOperations(src, resultMat, elongation);
+		complexObject = applyOperations(src, resultMat, elongation, iteration);
 		Mat resultMat2 = std::get<0>(complexObject);
 		sprintf(windowName, "%d %s", iteration,"-> Rezultat Binar");
 		imshow(windowName, resultMat2);
 		iteration++;
 		elongation = std::get<1>(complexObject);
 
-		complexObject = applyOperations(src, resultMat2, elongation);
+		complexObject = applyOperations(src, resultMat2, elongation, iteration);
 		resultMat2 = std::get<0>(complexObject);
 		sprintf(windowName, "%d %s", iteration, "-> Rezultat Binar");
 		imshow(windowName, resultMat2);
 		iteration++;
 		elongation = std::get<1>(complexObject);
 
-		complexObject = applyOperations(src, resultMat2, elongation);
+		complexObject = applyOperations(src, resultMat2, elongation, iteration);
 		resultMat2 = std::get<0>(complexObject);
 		sprintf(windowName, "%d %s", iteration, "-> Rezultat Binar");
 		imshow(windowName, resultMat2);
 		iteration++;
 		elongation = std::get<1>(complexObject);
 
-		complexObject = applyOperations(src, resultMat2, elongation);
+		complexObject = applyOperations(src, resultMat2, elongation, iteration);
 		resultMat2 = std::get<0>(complexObject);
 		sprintf(windowName, "%d %s", iteration, "-> Rezultat Binar");
 		imshow(windowName, resultMat2);
